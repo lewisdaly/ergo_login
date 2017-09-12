@@ -78,8 +78,8 @@ If (A_IsCompiled) {
 }
 
 ;TODO: load the user file from the dir
-Gui, Add, Button,
-
+Gui, Add, Button,, Load
+Gui, Add, Text,, Loaded user %GlobalEml%
 Gui, Add, Button,  Default, Launch Zwift
 Gui, Add, Button, yp xp+80, Restart ZwiftLauncher
 Gui, Add, Button,xs, Store Password
@@ -294,15 +294,15 @@ Return
 
 ; --------
 
-ButtonLoadFile:
-=FileSelectFile, SelectedFile, 3, , Open a file, User File (*.ini;)
+ButtonLoad:
+FileSelectFile, SelectedFile, 3, , Open a file, User File (*.ini;)
 if SelectedFile =
     MsgBox, The user didn't select anything.
 else
-    MsgBox, The user selected the following:`n%SelectedFile%
+    IniFile = %SelectedFile%
 
-;TODO: parse this file, and load into memory
-
+;Parse and load into memory
+LoadFromIni()
 Return
 
 
@@ -372,10 +372,14 @@ LoadFromIni()
   global GlobalPwd
   IniRead, GlobalEml, %IniFile%, Login, email
   IniRead, GlobalPwd, %IniFile%, Login, password
+  SB_SetText("Loaded.")
   If ( GlobalEml = "ERROR" ) or ( GlobalPwd = "ERROR" ) {
     GlobalEML =
     GlobalPwd =
+    SB_SetText("error loading file.")
   }
+
+  GuiControl, Enable, Launch Zwift
 }
 
 SetGuiInitialState()
